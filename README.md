@@ -1,1 +1,3 @@
-# SPD_Primer_Parcial
+# Primer parcial Sistema de procesamiento de datos 
+Alumno: Enzo Pose
+Div: D
