@@ -1,0 +1,154 @@
+#define A 12
+#define B 11
+#define C 10 
+#define D 9
+#define E 8
+#define F 7
+#define G 6
+#define LED_VERDE 5
+#define LED_ROJO 4
+#define PULSADOR_BAJAR 3
+#define PULSADOR_SUBIR 2
+#define PULSADOR_PARAR A0
+#define TIEMPO_ENTRE_PISOS 3000
+int contadorPisos = 0;
+int flagUltimoMovimiento=-1;
+
+
+void setup()
+{
+   Serial.begin(9600);
+   pinMode(A,OUTPUT);
+   pinMode(B,OUTPUT);
+   pinMode(C,OUTPUT);
+   pinMode(D,OUTPUT);
+   pinMode(E,OUTPUT);
+   pinMode(F,OUTPUT);
+   pinMode(G,OUTPUT);
+   pinMode(PULSADOR_SUBIR,INPUT_PULLUP);
+   pinMode(PULSADOR_BAJAR,INPUT_PULLUP);
+   pinMode(PULSADOR_PARAR,INPUT_PULLUP);
+}
+
+void cambiarEstadoLed(int led,int estado);
+void encenderSegmentosPorNumero(int segA,int segB,int segC,int segD,int segE,int segF,int segG,int numero);
+void encenderSegmentos(int segA,int segB,int segC,int segD,int segE,int segF,int segG,int booleanoA ,int booleanoB ,int booleanoC ,int booleanoD ,int booleanoE ,int booleanoF ,int booleanoG);
+
+void loop() 
+{  
+  if(digitalRead(PULSADOR_SUBIR) == LOW)
+  {
+    cambiarEstadoLed(LED_VERDE,HIGH);
+    cambiarEstadoLed(LED_ROJO,LOW);
+    if(flagUltimoMovimiento==0)
+    {
+      contadorPisos++;
+    }
+    while(digitalRead(PULSADOR_BAJAR) != LOW && digitalRead(PULSADOR_PARAR) != LOW)
+    {
+      encenderSegmentosPorNumero(A,B,C,D,E,F,G,contadorPisos);
+	  contadorPisos++;
+      delay(TIEMPO_ENTRE_PISOS);
+      if(contadorPisos>9)
+      {
+        contadorPisos=9;
+        break;
+      }
+    }
+    flagUltimoMovimiento = 1;
+  }
+  
+  if(digitalRead(PULSADOR_BAJAR) == LOW)
+  {
+    cambiarEstadoLed(LED_VERDE,HIGH);
+    cambiarEstadoLed(LED_ROJO,LOW);
+    if(flagUltimoMovimiento==1)
+    {
+      contadorPisos--;
+    }
+	while(digitalRead(PULSADOR_SUBIR) != LOW && digitalRead(PULSADOR_PARAR) != LOW)
+    {
+      encenderSegmentosPorNumero(A,B,C,D,E,F,G,contadorPisos);
+	  contadorPisos--;
+      delay(TIEMPO_ENTRE_PISOS);
+      if(contadorPisos<0)
+      {
+        contadorPisos=0;
+        break;
+      }
+    }
+    flagUltimoMovimiento = 0;
+  }
+  
+  if(digitalRead(PULSADOR_PARAR)==LOW)
+  {
+    cambiarEstadoLed(LED_VERDE,LOW);
+    cambiarEstadoLed(LED_ROJO,HIGH);
+  }
+  
+}
+
+
+void cambiarEstadoLed(int led,int estado)
+{
+   digitalWrite(led,estado);
+}
+
+
+void encenderSegmentosPorNumero(int segA,int segB,int segC,int segD,int segE,int segF,int segG,int numero)
+{
+  switch(numero)
+    {
+      case 0:
+        encenderSegmentos(segA,segB,segC,segD,segE,segF,segG,1,1,1,1,1,1,0);
+      break;
+      
+      case 1:
+        encenderSegmentos(segA,segB,segC,segD,segE,segF,segG,0,1,1,0,0,0,0);
+      break;
+      
+      case 2:
+        encenderSegmentos(segA,segB,segC,segD,segE,segF,segG,1,1,0,1,1,0,1);
+      break;
+      
+      case 3:
+        encenderSegmentos(segA,segB,segC,segD,segE,segF,segG,1,1,1,1,0,0,1);
+      break;
+      
+      case 4:
+        encenderSegmentos(segA,segB,segC,segD,segE,segF,segG,0,1,1,0,0,1,1);
+      break;
+      
+      case 5:
+        encenderSegmentos(segA,segB,segC,segD,segE,segF,segG,1,0,1,1,0,1,1);
+      break;
+      
+      case 6:
+        encenderSegmentos(segA,segB,segC,segD,segE,segF,segG,1,0,1,1,1,1,1);
+      break;
+      
+      case 7:
+        encenderSegmentos(segA,segB,segC,segD,segE,segF,segG,1,1,1,0,0,0,0);
+      break;
+      
+      case 8:
+        encenderSegmentos(segA,segB,segC,segD,segE,segF,segG,1,1,1,1,1,1,1);
+      break;
+      
+      case 9:
+        encenderSegmentos(segA,segB,segC,segD,segE,segF,segG,1,1,1,0,0,1,1);
+      break;
+  }
+}
+
+void encenderSegmentos(int segA,int segB,int segC,int segD,int segE,int segF,int segG,int booleanoA ,int booleanoB ,int booleanoC ,int booleanoD ,int booleanoE ,int booleanoF ,int booleanoG)
+{
+  cambiarEstadoLed(segA,booleanoA);
+  cambiarEstadoLed(segB,booleanoB);
+  cambiarEstadoLed(segC,booleanoC);
+  cambiarEstadoLed(segD,booleanoD);
+  cambiarEstadoLed(segE,booleanoE);
+  cambiarEstadoLed(segF,booleanoF);
+  cambiarEstadoLed(segG,booleanoG);
+}
+
